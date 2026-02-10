@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  twitchUrl    String?
+  logoUrl      String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  plannings    Planning[]
+}
+
+model Planning {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  weekStart  DateTime
+  weekEnd    DateTime
+
+  // bonus fields (safe to include now)
+  bgColor    String?
+  textColor  String?
+  accentColor String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  events     Event[]
+
+  @@index([userId])
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  planningId  String
+  planning    Planning @relation(fields: [planningId], references: [id], onDelete: Cascade)
+
+  title       String?
+  gameName    String
+  gameImageUrl String?
+  startsAt    DateTime
+  endsAt      DateTime
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([planningId])
+  @@index([startsAt])
+}
