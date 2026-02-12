@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 import { ApiError, asyncHandler } from "../lib/http";
 import { requireAuth, type AuthedRequest } from "../middleware/requireAuth";
+import { Prisma } from "../generated/prisma/browser";
 
 const router = Router();
 
@@ -43,7 +44,7 @@ router.put(
     const userId = req.user!.id;
     const data = UpdateMeSchema.parse(req.body);
 
-    const update: any = {};
+    const update: Prisma.UserUpdateInput = {};
     if (data.email !== undefined) update.email = data.email;
     if (data.twitchUrl !== undefined) update.twitchUrl = data.twitchUrl;
     if (data.logoUrl !== undefined) update.logoUrl = data.logoUrl;

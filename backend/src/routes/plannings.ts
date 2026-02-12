@@ -5,6 +5,7 @@ import { ApiError, asyncHandler } from "../lib/http";
 import { parseDateOnly } from "../lib/dates";
 import { requireAuth, type AuthedRequest } from "../middleware/requireAuth";
 import { assertNoPlanningOverlap } from "../lib/planning";
+import { Prisma } from "../generated/prisma/browser";
 
 const router = Router();
 
@@ -104,7 +105,7 @@ router.put(
     const existing = await prisma.planning.findFirst({ where: { id, userId } });
     if (!existing) throw new ApiError(404, "Planning not found");
 
-    const update: any = { ...body };
+    const update: Prisma.PlanningUpdateInput = {};
     if (body.weekStart) update.weekStart = parseDateOnly(body.weekStart);
     if (body.weekEnd) update.weekEnd = parseDateOnly(body.weekEnd);
 

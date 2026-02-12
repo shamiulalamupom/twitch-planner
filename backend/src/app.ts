@@ -1,4 +1,5 @@
 import express from "express";
+import type { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { env } from "./lib/env";
@@ -30,15 +31,17 @@ export function createApp() {
   app.use((_req, _res, next) => next(new ApiError(404, "Not found")));
 
   // error handler
-  app.use((err: any, _req: any, res: any, _next: any) => {
-    const status = err?.status ?? 500;
-    const message = err?.message ?? "Internal server error";
-    const details = err?.details;
+  app.use(
+    (err: ApiError, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err?.status ?? 500;
+      const message = err?.message ?? "Internal server error";
+      const details = err?.details;
 
-    if (status >= 500) console.error(err);
+      if (status >= 500) console.error(err);
 
-    res.status(status).json({ error: { message, details } });
-  });
+      res.status(status).json({ error: { message, details } });
+    },
+  );
 
   return app;
 }

@@ -4,6 +4,7 @@ import { prisma } from "../lib/prisma";
 import { ApiError, asyncHandler } from "../lib/http";
 import { parseDateTime } from "../lib/dates";
 import { requireAuth, type AuthedRequest } from "../middleware/requireAuth";
+import { Prisma } from "../generated/prisma/browser";
 
 const router = Router();
 
@@ -69,7 +70,7 @@ router.put(
     });
     if (!existing) throw new ApiError(404, "Event not found");
 
-    const update: any = { ...body };
+    const update: Prisma.EventUpdateInput = {};
     if (body.startsAt) update.startsAt = parseDateTime(body.startsAt);
     if (body.endsAt) update.endsAt = parseDateTime(body.endsAt);
 
