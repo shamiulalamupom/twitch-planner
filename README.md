@@ -34,14 +34,15 @@ Petite app planning de streams avec API Express/Prisma + frontend React/Vite. Le
 
 ## Lancement avec Docker
 
-1. Copier les `.env.example` si besoin (les services Docker les utilisent via `volumes`).  
-2. Construire et démarrer :
+1. Copier les `.env.example` si besoin : `backend/.env` et `frontend/.env` sont montés dans leurs conteneurs respectifs, donc ajustez-les pour votre environnement Docker (par exemple `DATABASE_URL=postgresql://twitchplanner:twitchplanner@db:5432/twitchplanner?schema=public`).
+2. Les Dockerfiles dans `backend/Dockerfile` et `frontend/Dockerfile` installent les dépendances au build et lancent les serveurs en mode dev ; les services partagent le réseau `twitchplanner_network`, ce qui permet au backend d’utiliser `db` comme hostname.
+3. Construire et démarrer l’ensemble :
 
    ```bash
    docker compose up --build
    ```
 
-3. Le backend est accessible sur `http://localhost:4000`, le frontend sur `http://localhost:5173`.
+4. Le backend est accessible sur `http://localhost:4000`, le frontend sur `http://localhost:5173`.
 
 ## Vérifications rapides
 
