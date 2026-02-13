@@ -11,40 +11,46 @@ export function Signup() {
   const [err, setErr] = useState<string | null>(null);
 
   return (
-    <div className="max-w-md space-y-3">
-      <h1 className="text-xl font-semibold">Create account</h1>
-      {err && <div className="border p-2 rounded text-sm">{err}</div>}
+    <div className="tp-form max-w-md">
+      <p className="tp-subheading">inscription</p>
+      <h1 className="tp-title">Créer un compte</h1>
+      {err && (
+        <div className="text-sm text-red-600">
+          {err}
+        </div>
+      )}
+
       <input
-        className="border w-full p-2 rounded"
+        className="tp-input"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <input
-        className="border w-full p-2 rounded"
-        placeholder="Password"
+        className="tp-input"
+        placeholder="Mot de passe"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button
-        className="border px-4 py-2 rounded"
-        onClick={async () => {
-          setErr(null);
-          try {
-            await signup(email, password);
-            nav("/plannings");
-          } catch (e) {
-            setErr(e instanceof ApiError ? e.message : "Signup failed");
-          }
-        }}
-      >
-        Sign up
-      </button>
-      <div className="text-sm">
-        Already have an account?{" "}
-        <Link className="underline" to="/login">
-          Login
+
+      <div className="flex flex-wrap gap-3">
+        <button
+          className="tp-btn tp-btn-primary"
+          onClick={async () => {
+            setErr(null);
+            try {
+              await signup(email, password);
+              nav("/plannings");
+            } catch (e) {
+              setErr(e instanceof ApiError ? e.message : "Signup failed");
+            }
+          }}
+        >
+          Créer
+        </button>
+        <Link to="/login" className="tp-btn tp-btn-secondary">
+          Connexion
         </Link>
       </div>
     </div>

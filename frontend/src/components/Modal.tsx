@@ -1,31 +1,63 @@
-import React from "react";
+import { useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
+import type { ReactNode } from "react";
 
-export function Modal({
-  open,
-  title,
-  children,
-  onClose,
-}: {
+type ModalProps = {
   open: boolean;
-  title: string;
-  children: React.ReactNode;
+  title?: string;
+  children: ReactNode;
   onClose: () => void;
-}) {
+};
+
+export function Modal({ open, title, children, onClose }: ModalProps) {
+  const portalNode = useMemo(() => document.createElement("div"), []);
+
+  useEffect(() => {
+    document.body.appendChild(portalNode);
+    return () => {
+      if (document.body.contains(portalNode)) {
+        document.body.removeChild(portalNode);
+      }
+    };
+  }, [portalNode]);
+
   if (!open) return null;
-  return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg rounded bg-white p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-semibold">{title}</h2>
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-[3px]" />
+
+      <div className="tp-modal-base">
+        <div className="tp-modal-header">
+          <div className="min-w-0">
+            {title ? (
+              <h2 className="truncate text-lg font-black">{title}</h2>
+            ) : (
+              <div className="h-6" />
+            )}
+          </div>
+
           <button
-            className="text-sm border px-2 py-1 rounded"
+            type="button"
             onClick={onClose}
+            className="tp-modal-close"
+            aria-label="Close"
+            title="Close"
           >
-            Close
+            ✕
           </button>
         </div>
-        {children}
+
+        <div className="tp-modal-body">{children}</div>
       </div>
-    </div>
+    </div>,
+    portalNode,
   );
 }

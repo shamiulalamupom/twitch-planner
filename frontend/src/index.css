@@ -1,1 +1,365 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Chivo:wght@600;700&display=swap");
 @import "tailwindcss";
+
+:root {
+  --tp-blue-bg: #1b2d72;
+  --tp-blue-mid: #32489f;
+  --tp-blue-light: #4f6fd3;
+  --tp-blue-accent: #25c5f6;
+  --tp-midnight: #0c1a46;
+  --tp-white-soft: rgba(255, 255, 255, 0.9);
+  --tp-border-soft: rgba(255, 255, 255, 0.35);
+  --tp-shadow: 0 20px 45px rgba(9, 10, 66, 0.35);
+  --tp-error: #ef4444;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Space Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 45%),
+    linear-gradient(180deg, #0a1a44 0%, #0b1137 45%, #131c56 100%);
+  color: white;
+  min-height: 100vh;
+  margin: 0;
+}
+
+@layer base {
+  body,
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  input,
+  select,
+  textarea {
+    appearance: none;
+    border: none;
+    background: none;
+    color: inherit;
+  }
+}
+
+@layer components {
+  .tp-page {
+    min-height: 100vh;
+    background: radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.15), transparent 40%)
+        no-repeat,
+      radial-gradient(circle at 90% 20%, rgba(37, 197, 246, 0.25), transparent 35%) no-repeat,
+      transparent;
+    padding-bottom: 3rem;
+  }
+
+  .tp-section {
+    @apply mx-auto max-w-5xl rounded-[32px] bg-white/20 px-6 py-8 shadow-2xl backdrop-blur;;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .tp-card {
+    @apply rounded-[24px] bg-white/90 p-6 shadow-lg text-slate-900;
+  }
+
+  .tp-pill-new {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-lg;
+    background: linear-gradient(135deg, #28bef3, #29c1c5);
+  }
+
+  .tp-btn {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-semibold tracking-[0.08em] text-sm uppercase transition;
+    border: none;
+  }
+
+  .tp-btn-primary {
+    background: linear-gradient(135deg, #56b1ff, #42a3f5);
+    color: white;
+    box-shadow: var(--tp-shadow);
+  }
+
+  .tp-btn-secondary {
+    background: rgba(255, 255, 255, 0.45);
+    color: var(--tp-midnight);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 12px 30px rgba(3, 7, 32, 0.35);
+  }
+
+  .tp-btn-secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--tp-midnight);
+  }
+
+  .tp-btn-secondary:disabled {
+    background: rgba(255, 255, 255, 0.35);
+    color: rgba(12, 26, 70, 0.5);
+  }
+
+  .tp-btn-purple {
+    @apply rounded-lg px-4 py-2 font-semibold text-white;
+    background: linear-gradient(135deg, #6d5cf6, #8a61ff);
+  }
+
+  .tp-hero {
+    @apply flex flex-col gap-8 rounded-[36px] bg-gradient-to-br from-[#3c6cd9] to-[#1c3a8d] p-8 shadow-[0_30px_65px_rgba(8,10,50,0.7)];
+    border: 2px solid rgba(255, 255, 255, 0.28);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tp-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 70% -20%, rgba(255, 255, 255, 0.25), transparent 55%);
+    pointer-events: none;
+  }
+
+  .tp-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 540px;
+  }
+
+  .tp-hero-label {
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .tp-hero-title {
+    @apply text-4xl font-bold leading-tight;
+    font-family: "Chivo", sans-serif;
+  }
+
+  .tp-hero-copy {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-top: 0.75rem;
+  }
+
+  .tp-hero-actions {
+    @apply mt-6 flex flex-wrap gap-3;
+  }
+
+  .tp-hero-preview {
+    position: relative;
+    z-index: 1;
+    @apply rounded-3xl bg-white/10 p-6 shadow-[0_25px_45px_rgba(0,0,0,0.45)];
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    min-height: 260px;
+  }
+
+  .tp-hero-preview-grid {
+    @apply mt-4 grid grid-cols-3 gap-3;
+  }
+
+  .tp-hero-preview-day {
+    @apply flex flex-col gap-2 rounded-2xl bg-white/20 py-2 px-3 text-center text-xs uppercase tracking-[0.2em];
+  }
+
+  .tp-hero-preview-event {
+    @apply mt-2 rounded-2xl bg-[#18baff] px-2 py-3 text-[0.7rem] font-semibold tracking-tight text-slate-900;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.65);
+  }
+
+  .tp-subheading {
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .tp-form {
+    @apply space-y-4 rounded-[28px] bg-white/90 p-6 shadow-xl text-slate-900;
+  }
+
+  .tp-form .tp-title {
+    @apply text-2xl font-bold text-slate-900;
+    font-family: "Chivo", sans-serif;
+  }
+
+  .tp-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm font-medium text-slate-900 shadow-[inset_0_1px_4px_rgba(0,0,0,0.08)];
+  }
+
+  .tp-game-suggestions {
+    @apply mt-2 max-h-72 overflow-y-auto rounded-2xl border border-slate-200 bg-white/95 p-2 shadow-lg;
+  }
+
+  .tp-game-suggestion {
+    @apply flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2 text-left transition hover:bg-slate-100;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+  }
+
+  .tp-game-suggestion-thumb {
+    @apply h-12 w-12 flex-shrink-0 rounded-lg object-cover;
+  }
+
+  .tp-game-suggestion-placeholder {
+    @apply h-12 w-12 flex-shrink-0 rounded-lg bg-slate-200;
+  }
+
+  .tp-game-suggestion-info {
+    @apply flex flex-1 flex-col gap-0.5 text-sm text-slate-900;
+  }
+
+  .tp-game-suggestion-meta {
+    @apply text-xs text-slate-500;
+  }
+
+  .tp-form-note {
+    @apply text-xs text-slate-600;
+  }
+
+  .tp-modal-base {
+    @apply relative w-full overflow-hidden rounded-[32px] border border-white/30 bg-gradient-to-br from-white/95 to-white/80 shadow-2xl;
+    width: min(90vw, 620px);
+    color: #0f172a;
+  }
+
+  .tp-modal-header {
+    @apply flex items-center justify-between gap-3 border-b border-white/40 px-6 py-4 text-slate-900;
+  }
+
+  .tp-modal-body {
+    @apply max-h-[70vh] overflow-y-auto px-6 py-5;
+  }
+
+  .tp-board-16x9 {
+    @apply rounded-2xl p-3 shadow-[0_25px_55px_rgba(5,5,30,0.65)] flex flex-col gap-3 h-[520px] min-h-[520px] max-h-[520px];
+    background: linear-gradient(180deg, #3d6ec7, #1f3a7d);
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    color: white;
+  }
+
+  .tp-board-16x9.tp-exporting .tp-plusbar,
+  .tp-board-16x9.tp-exporting .tp-plusbar-bottom {
+    display: none;
+  }
+
+  .tp-board-top {
+    @apply flex gap-3;
+  }
+
+  .tp-board-top-left {
+    @apply flex-1 rounded-2xl p-3;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .tp-board-top-right {
+    @apply w-[210px] flex flex-col gap-2;
+  }
+
+  .tp-board-title {
+    @apply text-2xl font-black leading-tight text-white tracking-tight;
+  }
+
+  .tp-board-range {
+    @apply text-sm font-semibold text-white/90;
+  }
+
+  .tp-logo-bar {
+    @apply rounded-xl px-4 py-2 flex items-center justify-between text-xs font-semibold;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .tp-avatar-box {
+    @apply flex-1 rounded-xl flex items-center justify-center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .tp-days-row {
+    @apply mt-3 flex gap-3 flex-1 items-stretch h-full;
+    min-height: 0;
+  }
+
+  .tp-day-col {
+    @apply flex flex-col rounded-2xl border-[2px] bg-[#1a2e74] border-white/20 h-full min-h-0;
+    min-height: 0;
+    overflow: hidden;
+    transition: flex 0.3s ease, min-width 0.3s ease;
+  }
+
+  .tp-day-events {
+    @apply flex flex-col gap-2 overflow-y-auto flex-1;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .tp-day-head {
+    @apply text-center font-semibold uppercase tracking-[0.3em] text-white/80 py-2;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .tp-plusbar,
+  .tp-plusbar-bottom {
+    @apply w-full flex items-center justify-center text-white font-black uppercase tracking-[0.2em] text-xl;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .tp-plusbar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .tp-empty-center {
+    @apply flex-1 flex items-center justify-center text-white/60 font-black uppercase;
+    position: relative;
+  }
+
+  .tp-empty-off {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.7em;
+    font-size: 1.1rem;
+  }
+
+  .tp-event-tile {
+    @apply relative overflow-hidden rounded-2xl border-[4px];
+    border-color: var(--tp-blue-accent);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  .tp-event-tile img {
+    @apply h-36 w-full object-cover;
+  }
+
+  .tp-time-tag {
+    @apply absolute left-0 top-0 rounded-br-2xl px-3 py-1 text-xs font-black text-slate-900;
+    background: var(--tp-blue-accent);
+    z-index: 10;
+  }
+
+  .tp-game-tag,
+  .tp-title-tag {
+    @apply absolute px-3 py-1 text-xs font-extrabold text-slate-900;
+    background: var(--tp-blue-accent);
+    z-index: 10;
+  }
+
+  .tp-game-tag {
+    @apply bottom-0 right-0 rounded-tl-2xl;
+  }
+
+  .tp-title-tag {
+    @apply bottom-0 left-0 rounded-tr-2xl;
+  }
+
+  .tp-modal-close {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 text-slate-900 hover:bg-white;
+  }
+}

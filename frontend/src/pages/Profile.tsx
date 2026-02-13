@@ -12,62 +12,66 @@ export function Profile() {
   const [err, setErr] = useState<string | null>(null);
 
   return (
-    <div className="max-w-lg space-y-3">
-      <h1 className="text-xl font-semibold">Profile</h1>
-      {msg && <div className="border p-2 rounded text-sm">{msg}</div>}
-      {err && <div className="border p-2 rounded text-sm">{err}</div>}
+    <div className="tp-form max-w-lg">
+      <p className="tp-subheading">profil</p>
+      <h1 className="tp-title">Modifier le profil</h1>
+
+      {msg && <div className="tp-form-note text-emerald-600">{msg}</div>}
+      {err && <div className="tp-form-note text-red-600">{err}</div>}
 
       <input
-        className="border w-full p-2 rounded"
+        className="tp-input"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
       />
       <input
-        className="border w-full p-2 rounded"
+        className="tp-input"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="New password (optional)"
+        placeholder="Nouveau mot de passe (optionnel)"
         type="password"
       />
       <input
-        className="border w-full p-2 rounded"
+        className="tp-input"
         value={twitchUrl}
         onChange={(e) => setTwitchUrl(e.target.value)}
-        placeholder="Twitch channel URL"
+        placeholder="URL de la chaîne Twitch"
       />
       <input
-        className="border w-full p-2 rounded"
+        className="tp-input"
         value={logoUrl}
         onChange={(e) => setLogoUrl(e.target.value)}
-        placeholder="Logo URL"
+        placeholder="URL du logo"
       />
 
-      <button
-        className="border px-4 py-2 rounded"
-        onClick={async () => {
-          setMsg(null);
-          setErr(null);
-          try {
-            await api("/me", {
-              method: "PUT",
-              token: token!,
-              body: JSON.stringify({
-                email,
-                ...(password ? { password } : {}),
-                twitchUrl: twitchUrl || null,
-                logoUrl: logoUrl || null,
-              }),
-            });
-            setPassword("");
-            setMsg("Saved.");
-          } catch (e) {
-            setErr(e instanceof ApiError ? e.message : "Save failed");
-          }
-        }}
-      >
-        Save
-      </button>
+      <div className="flex gap-3">
+        <button
+          className="tp-btn tp-btn-primary"
+          onClick={async () => {
+            setMsg(null);
+            setErr(null);
+            try {
+              await api("/me", {
+                method: "PUT",
+                token: token!,
+                body: JSON.stringify({
+                  email,
+                  ...(password ? { password } : {}),
+                  twitchUrl: twitchUrl || null,
+                  logoUrl: logoUrl || null,
+                }),
+              });
+              setPassword("");
+              setMsg("Profil enregistré.");
+            } catch (e) {
+              setErr(e instanceof ApiError ? e.message : "Save failed");
+            }
+          }}
+        >
+          Enregistrer
+        </button>
+      </div>
     </div>
   );
 }

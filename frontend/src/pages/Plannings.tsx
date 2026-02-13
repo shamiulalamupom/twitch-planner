@@ -8,6 +8,7 @@ import {
   startOfWeekSundayLocal,
   toYmd,
 } from "../lib/dates";
+import { Modal } from "../components/Modal";
 
 export function Plannings() {
   const { token } = useAuth();
@@ -27,7 +28,8 @@ export function Plannings() {
     [today],
   );
 
-  const [name, setName] = useState("My Planning");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [name, setName] = useState("Planning de stream");
   const [weekStart, setWeekStart] = useState(defaultStart);
   const [weekEnd, setWeekEnd] = useState(defaultEnd);
   const [creating, setCreating] = useState(false);
@@ -53,6 +55,14 @@ export function Plannings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function openCreate() {
+    setCreateErr(null);
+    setName("Planning de stream");
+    setWeekStart(defaultStart);
+    setWeekEnd(defaultEnd);
+    setCreateOpen(true);
+  }
+
   async function createPlanning() {
     setCreateErr(null);
     setCreating(true);
@@ -63,6 +73,7 @@ export function Plannings() {
         body: JSON.stringify({ name, weekStart, weekEnd }),
       });
       setPlannings((prev) => [res.planning, ...prev]);
+      setCreateOpen(false);
       nav(`/plannings/${res.planning.id}`);
     } catch (e) {
       setCreateErr(e instanceof ApiError ? e.message : "Create failed");
@@ -71,8 +82,9 @@ export function Plannings() {
     }
   }
 
+  const [deletePlanningTarget, setDeletePlanningTarget] = useState<Planning | null>(null);
+
   async function deletePlanning(id: string) {
-    if (!confirm("Delete this planning?")) return;
     setErr(null);
     try {
       await api<void>(`/plannings/${id}`, { method: "DELETE", token: token! });
@@ -83,121 +95,165 @@ export function Plannings() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="tp-section space-y-5">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold">Plannings</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">
+          Mes plannings
+        </h1>
+
         <button
-          className="border px-3 py-2 rounded"
-          onClick={refresh}
-          disabled={loading}
+          className="tp-pill-new"
+          onClick={openCreate}
+          disabled={creating}
         >
-          Refresh
+          <span className="text-lg leading-none">＋</span>
+          Nouveau planning
         </button>
       </div>
 
-      <div className="border rounded p-4 space-y-3">
-        <div className="font-semibold">Create planning</div>
-        {createErr && (
-          <div className="border p-2 rounded text-sm">{createErr}</div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <div className="text-sm">Name</div>
-            <input
-              className="border w-full p-2 rounded"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-1">
-            <div className="text-sm">Start date</div>
-            <input
-              className="border w-full p-2 rounded"
-              type="date"
-              value={weekStart}
-              onChange={(e) => setWeekStart(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-1">
-            <div className="text-sm">End date</div>
-            <input
-              className="border w-full p-2 rounded"
-              type="date"
-              value={weekEnd}
-              onChange={(e) => setWeekEnd(e.target.value)}
-            />
-          </div>
+      {err && (
+        <div className="tp-card border border-black/10">
+          <div className="text-sm">{err}</div>
         </div>
-
-        <div className="flex items-center justify-between gap-4">
-          <h1 className="text-3xl font-extrabold tracking-tight">
-            Mes plannings
-          </h1>
-
-          <button
-            className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2 text-white shadow hover:bg-emerald-600"
-            onClick={createPlanning}
-            disabled={creating}
-          >
-            <span className="text-lg leading-none">＋</span>
-            Nouveau planning
-          </button>
-        </div>
-
-        <div className="text-xs text-gray-600">
-          Note: overlapping date ranges should be rejected by the backend (409).
-        </div>
-      </div>
-
-      {err && <div className="border p-2 rounded text-sm">{err}</div>}
+      )}
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="tp-card">Chargement...</div>
       ) : plannings.length === 0 ? (
-        <div className="text-gray-600">No plannings yet.</div>
+        <div className="tp-card text-slate-700">
+          Aucun planning pour le moment.
+        </div>
       ) : (
-        <div className="border rounded">
-          <div className="grid grid-cols-12 gap-2 p-3 border-b text-sm font-semibold">
-            <div className="col-span-5">Name</div>
-            <div className="col-span-5">Range</div>
-            <div className="col-span-2 text-right">Actions</div>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {plannings.map((p) => (
             <div
               key={p.id}
-              className="grid grid-cols-12 gap-2 p-3 border-b items-center"
+              className="tp-card flex items-start justify-between gap-4"
             >
-              <div className="col-span-5">
-                <Link className="underline" to={`/plannings/${p.id}`}>
-                  {p.name}
-                </Link>
-              </div>
-              <div className="col-span-5 text-sm text-gray-700">
-                {new Date(p.weekStart).toISOString().slice(0, 10)} →{" "}
-                {new Date(p.weekEnd).toISOString().slice(0, 10)}
-              </div>
-              <div className="col-span-2 flex justify-end gap-2">
-                <Link
-                  className="border px-3 py-1 rounded text-sm"
-                  to={`/plannings/${p.id}`}
-                >
-                  Open
-                </Link>
+              <Link to={`/plannings/${p.id}`} className="min-w-0">
+                <div className="text-lg font-bold truncate">{p.name}</div>
+                <div className="text-sm text-slate-700">
+                  {new Date(p.weekStart).toISOString().slice(0, 10)} →{" "}
+                  {new Date(p.weekEnd).toISOString().slice(0, 10)}
+                </div>
+              </Link>
+
+              <div className="flex shrink-0 items-center gap-2">
                 <button
-                  className="border px-3 py-1 rounded text-sm"
-                  onClick={() => deletePlanning(p.id)}
+                  className="border px-3 py-1 rounded bg-white/70 text-sm"
+                  onClick={() => nav(`/plannings/${p.id}`)}
                 >
-                  Delete
+                  Ouvrir
+                </button>
+                <button
+                  className="border px-3 py-1 rounded bg-white/70 text-sm"
+                  onClick={() => setDeletePlanningTarget(p)}
+                >
+                  Supprimer
                 </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      <Modal
+        open={createOpen}
+        title="Créer un planning"
+        onClose={() => setCreateOpen(false)}
+      >
+        <div className="space-y-3">
+          {createErr && (
+            <div className="border p-2 rounded text-sm">{createErr}</div>
+          )}
+
+          <div className="space-y-1">
+            <div className="text-xs font-semibold text-slate-700">Nom</div>
+            <input
+              className="tp-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-slate-700">Début</div>
+              <input
+                className="tp-input"
+                type="date"
+                value={weekStart}
+                onChange={(e) => setWeekStart(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-slate-700">Fin</div>
+              <input
+                className="tp-input"
+                type="date"
+                value={weekEnd}
+                onChange={(e) => setWeekEnd(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              className="tp-btn tp-btn-secondary"
+              type="button"
+              onClick={() => setCreateOpen(false)}
+              disabled={creating}
+            >
+              Annuler
+            </button>
+            <button
+              className="tp-btn tp-btn-primary"
+              type="button"
+              onClick={createPlanning}
+              disabled={creating}
+            >
+              {creating ? "Création..." : "Créer"}
+            </button>
+          </div>
+
+          <div className="text-xs text-slate-600">
+            Les dates ne doivent pas se chevaucher.
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        open={!!deletePlanningTarget}
+        title="Supprimer le planning"
+        onClose={() => setDeletePlanningTarget(null)}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-700">
+            Êtes-vous sûr de vouloir supprimer{" "}
+            <strong>{deletePlanningTarget?.name}</strong> ?
+          </p>
+          <div className="flex gap-3">
+            <button
+              className="tp-btn tp-btn-secondary"
+              type="button"
+              onClick={() => setDeletePlanningTarget(null)}
+            >
+              Annuler
+            </button>
+            <button
+              className="tp-btn tp-btn-primary"
+              type="button"
+              onClick={async () => {
+                if (!deletePlanningTarget) return;
+                await deletePlanning(deletePlanningTarget.id);
+                setDeletePlanningTarget(null);
+              }}
+            >
+              Confirmer
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
